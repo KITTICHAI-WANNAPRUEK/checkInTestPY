@@ -1,0 +1,146 @@
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <title>testForm</title> 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    </head> 
+    <body> 
+        <h1>h1 heading</h1> 
+        <a href="form2.html"> 
+            <img src="swag-cat-swagbilli-cutecat-cats-cat-swag-ok-yooo-yo.png" alt="pic of thing" height="200"> </a> 
+            <p> ทำโดยฉันเองง </p> 
+            <audio controls><source src="videoplayback.m4a"></audio> 
+            <br> 
+            <form id="checkinform"> 
+                <div> <label for="fname">ชื่อ (First Name):</label> 
+                    <input type="text" id="fname" name="fname" placeholder="กิตติพงษ์" required> 
+                </div> 
+                <div> <label for="lname">นามสกุล (Surname):</label> <input type="text" id="lname" name="lname" placeholder="ศรีสุพล" required> 
+                </div> 
+                <br> 
+                <div><input type="reset"></div> 
+                <br> 
+                <div><input type="submit" value="เช็คชื่อมา"></div> 
+            </form> 
+            <br> 
+            <button style="font-size:25px; background-color: green; color: aquamarine; border-radius: 5px;">คลิกทดสอบๆ</button>
+<script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycby6ZoDuOZghp4J4tI3zqFVpaABRIYBzjKa0KrnKRAoDxNhyzU4K1nwVP99nItYAo6MOPg/exec";
+    const targetLat = 17.40378079256711;
+    const targetLon = 104.77900306984257;
+    const Timenow = new Date();
+    function getDistance(lat1, lon1, lat2, lon2){
+    
+
+    const R = 6371000;
+
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}
+
+    const form = document.getElementById("checkinform");
+
+    form.addEventListener("submit", function(event){
+
+        event.preventDefault();
+
+        const fname = document.getElementById("fname").value;
+        const lname = document.getElementById("lname").value;
+
+        console.log(fname);
+        console.log(lname);
+        console.log(Timenow);
+navigator.geolocation.getCurrentPosition(
+
+    function(position){
+
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        console.log(latitude);
+        console.log(longitude);
+const distance = getDistance(
+    targetLat,
+    targetLon,
+    latitude,
+    longitude
+);
+
+console.log(distance);
+if(distance <= 100){
+
+    fetch(scriptURL, {
+
+        method: "POST",
+
+        body: JSON.stringify({
+
+            fname: fname,
+            lname: lname,
+            latitude: latitude,
+            longitude: longitude,
+            distance: distance
+
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        console.log(data);
+
+        alert("บันทึกข้อมูลสำเร็จ");
+
+    })
+
+    .catch(error => {
+
+        console.log(error);
+
+        alert("ส่งข้อมูลไม่สำเร็จ");
+
+    });
+
+}
+else{
+
+    alert("อยู่นอกพื้นที่");
+
+}
+
+    },
+
+    function(error){
+
+        console.log(error);
+
+        alert(error.message);
+    },
+
+    {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    }
+);
+
+    });
+
+</script>
+        </body> 
+</html>
+
